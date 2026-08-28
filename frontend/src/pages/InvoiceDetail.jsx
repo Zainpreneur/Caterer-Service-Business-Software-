@@ -80,7 +80,7 @@ export default function InvoiceDetail() {
   return (
     <div className="space-y-6 print:space-y-4">
       <div className="flex items-center justify-between print:hidden">
-        <Link to="/invoices" className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:underline">
+        <Link to="/invoices" className="inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:underline">
           <ArrowLeft size={16} /> Back to invoices
         </Link>
         <div className="flex gap-2">
@@ -98,7 +98,7 @@ export default function InvoiceDetail() {
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{invoice.invoiceNumber}</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              For event: <Link to={`/events/${invoice.eventId}`} className="hover:text-indigo-600 hover:underline">{invoice.event?.title}</Link>
+              For event: <Link to={`/events/${invoice.eventId}`} className="hover:text-slate-900 hover:underline">{invoice.event?.title}</Link>
             </p>
             <p className="text-sm text-slate-500 dark:text-slate-400">Bill to: {invoice.event?.customer?.name}</p>
           </div>
@@ -143,7 +143,7 @@ export default function InvoiceDetail() {
         <div className="mb-4 flex items-center justify-between print:hidden">
           <h2 className="text-base font-semibold text-slate-900 dark:text-white">Payment History</h2>
           {balanceDue > 0 && (
-            <button onClick={() => { setPaymentForm({ ...emptyPaymentForm, amount: balanceDue.toFixed(2) }); setPaymentModalOpen(true); }} className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+            <button onClick={() => { setPaymentForm({ ...emptyPaymentForm, amount: balanceDue.toFixed(2) }); setPaymentModalOpen(true); }} className="flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-900">
               <Plus size={14} /> Record Payment
             </button>
           )}
@@ -209,7 +209,7 @@ export default function InvoiceDetail() {
             <button type="button" onClick={() => setPaymentModalOpen(false)} className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
               Cancel
             </button>
-            <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+            <button type="submit" className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900">
               Save Payment
             </button>
           </div>

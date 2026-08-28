@@ -23,7 +23,7 @@ export default function CustomerDetail() {
 
   return (
     <div className="space-y-6">
-      <Link to="/customers" className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:underline">
+      <Link to="/customers" className="inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:underline">
         <ArrowLeft size={16} /> Back to customers
       </Link>
 
@@ -61,7 +61,7 @@ export default function CustomerDetail() {
             {customer.events.map((ev) => (
               <li key={ev.id} className="flex items-center justify-between py-3">
                 <div>
-                  <Link to={`/events/${ev.id}`} className="font-medium text-slate-800 hover:text-indigo-600 dark:text-slate-100">
+                  <Link to={`/events/${ev.id}`} className="font-medium text-slate-800 hover:text-slate-900 dark:text-slate-100">
                     {ev.title}
                   </Link>
                   <p className="text-xs text-slate-500 dark:text-slate-400">

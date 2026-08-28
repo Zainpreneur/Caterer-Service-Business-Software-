@@ -164,7 +164,7 @@ export default function Menu() {
           <button onClick={openCreateCategory} className="flex items-center gap-2 rounded-lg border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
             <Plus size={16} /> Category
           </button>
-          <button onClick={openCreateItem} className="flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700">
+          <button onClick={openCreateItem} className="flex items-center gap-2 rounded-lg bg-slate-800 px-4 py-2 text-sm font-semibold text-white hover:bg-slate-900">
             <Plus size={16} /> Menu Item
           </button>
         </div>
@@ -174,7 +174,7 @@ export default function Menu() {
         <button
           onClick={() => setActiveCategory('all')}
           className={`rounded-full px-3.5 py-1.5 text-sm font-medium ${
-            activeCategory === 'all' ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'
+            activeCategory === 'all' ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'
           }`}
         >
           All ({allItems.length})
@@ -184,13 +184,13 @@ export default function Menu() {
             <button
               onClick={() => setActiveCategory(String(cat.id))}
               className={`rounded-full px-3.5 py-1.5 text-sm font-medium ${
-                activeCategory === String(cat.id) ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'
+                activeCategory === String(cat.id) ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'
               }`}
             >
               {cat.name} ({cat.items?.length || 0})
             </button>
             <span className="absolute -right-1 -top-1 hidden gap-0.5 rounded-full bg-white p-0.5 shadow group-hover:flex dark:bg-slate-800">
-              <button onClick={() => openEditCategory(cat)} className="rounded p-0.5 text-slate-500 hover:text-indigo-600">
+              <button onClick={() => openEditCategory(cat)} className="rounded p-0.5 text-slate-500 hover:text-slate-900">
                 <Pencil size={11} />
               </button>
               <button onClick={() => setDeleteCategoryTarget(cat)} className="rounded p-0.5 text-slate-500 hover:text-rose-600">
@@ -210,7 +210,7 @@ export default function Menu() {
               <div className="flex items-start justify-between">
                 <h3 className="font-semibold text-slate-900 dark:text-white">{item.name}</h3>
                 <div className="flex gap-1">
-                  <button onClick={() => openEditItem(item)} className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-indigo-600 dark:hover:bg-slate-800">
+                  <button onClick={() => openEditItem(item)} className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-900 dark:hover:bg-slate-800">
                     <Pencil size={14} />
                   </button>
                   <button onClick={() => setDeleteItemTarget(item)} className="rounded p-1 text-slate-400 hover:bg-slate-100 hover:text-rose-600 dark:hover:bg-slate-800">
@@ -220,7 +220,7 @@ export default function Menu() {
               </div>
               {item.description && <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">{item.description}</p>}
               <div className="mt-3 flex items-center justify-between">
-                <span className="text-lg font-semibold text-indigo-600">{formatCurrency(item.pricePerHead)} <span className="text-xs font-normal text-slate-400">/ head</span></span>
+                <span className="text-lg font-semibold text-slate-900">{formatCurrency(item.pricePerHead)} <span className="text-xs font-normal text-slate-400">/ head</span></span>
                 {!item.isAvailable && (
                   <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500 dark:bg-slate-800">Unavailable</span>
                 )}
@@ -253,7 +253,7 @@ export default function Menu() {
               required
               value={categoryForm.name}
               onChange={(e) => setCategoryForm({ ...categoryForm, name: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </div>
           <div>
@@ -262,14 +262,14 @@ export default function Menu() {
               rows={2}
               value={categoryForm.description}
               onChange={(e) => setCategoryForm({ ...categoryForm, description: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </div>
           <div className="flex justify-end gap-3 pt-2">
             <button type="button" onClick={() => setCategoryModalOpen(false)} className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
               Cancel
             </button>
-            <button type="submit" disabled={saving} className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60">
+            <button type="submit" disabled={saving} className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900 disabled:opacity-60">
               {saving ? 'Saving…' : 'Save'}
             </button>
           </div>
@@ -285,7 +285,7 @@ export default function Menu() {
               required
               value={itemForm.name}
               onChange={(e) => setItemForm({ ...itemForm, name: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </div>
           <div>
@@ -294,7 +294,7 @@ export default function Menu() {
               rows={2}
               value={itemForm.description}
               onChange={(e) => setItemForm({ ...itemForm, description: e.target.value })}
-              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+              className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -307,7 +307,7 @@ export default function Menu() {
                 required
                 value={itemForm.pricePerHead}
                 onChange={(e) => setItemForm({ ...itemForm, pricePerHead: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               />
             </div>
             <div>
@@ -315,7 +315,7 @@ export default function Menu() {
               <select
                 value={itemForm.categoryId}
                 onChange={(e) => setItemForm({ ...itemForm, categoryId: e.target.value })}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
               >
                 <option value="">Uncategorized</option>
                 {categories.map((c) => (
@@ -333,7 +333,7 @@ export default function Menu() {
             <button type="button" onClick={() => setItemModalOpen(false)} className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
               Cancel
             </button>
-            <button type="submit" disabled={saving} className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60">
+            <button type="submit" disabled={saving} className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900 disabled:opacity-60">
               {saving ? 'Saving…' : 'Save'}
             </button>
           </div>
@@ -359,7 +359,7 @@ export default function Menu() {
 function Checkbox({ label, checked, onChange }) {
   return (
     <label className="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-400" />
       {label}
     </label>
   );

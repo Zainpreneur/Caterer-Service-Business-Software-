@@ -44,7 +44,7 @@ export default function Invoices() {
             key={s}
             onClick={() => setStatusFilter(s)}
             className={`rounded-full px-3.5 py-1.5 text-sm font-medium capitalize ${
-              statusFilter === s ? 'bg-indigo-600 text-white' : 'bg-white text-slate-600 border border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'
+              statusFilter === s ? 'bg-slate-800 text-white' : 'bg-white text-slate-600 border border-slate-300 dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700'
             }`}
           >
             {s === 'all' ? 'All' : s.replace('_', ' ')}
@@ -73,7 +73,7 @@ export default function Invoices() {
               {invoices.map((inv) => (
                 <tr key={inv.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
                   <td className="px-4 py-3">
-                    <Link to={`/invoices/${inv.id}`} className="font-medium text-slate-800 hover:text-indigo-600 dark:text-slate-100">
+                    <Link to={`/invoices/${inv.id}`} className="font-medium text-slate-800 hover:text-slate-900 dark:text-slate-100">
                       {inv.invoiceNumber}
                     </Link>
                   </td>

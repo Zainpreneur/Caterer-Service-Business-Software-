@@ -8,7 +8,9 @@ import LoadingSpinner from '../components/LoadingSpinner';
 import Badge from '../components/Badge';
 import { formatCurrency, formatDate } from '../utils/format';
 
-const PIE_COLORS = ['#f59e0b', '#4f46e5', '#8b5cf6', '#10b981', '#f43f5e'];
+// Matches the semantic status colors used by the Badge component (amber/blue/purple/emerald/rose)
+// so this chart stays consistent with status badges shown elsewhere in the app.
+const PIE_COLORS = ['#f59e0b', '#3b82f6', '#8b5cf6', '#10b981', '#f43f5e'];
 
 export default function Dashboard() {
   const [data, setData] = useState(null);
@@ -34,7 +36,7 @@ export default function Dashboard() {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard label="Total Customers" value={data.totalCustomers} icon={Users} accent="indigo" />
+        <StatCard label="Total Customers" value={data.totalCustomers} icon={Users} accent="slate" />
         <StatCard label="Events This Month" value={data.eventsThisMonth} icon={CalendarDays} accent="amber" />
         <StatCard
           label="Revenue Collected"
@@ -64,7 +66,7 @@ export default function Dashboard() {
                 <XAxis type="number" allowDecimals={false} stroke="currentColor" className="text-xs text-slate-500" />
                 <YAxis type="category" dataKey="name" width={160} stroke="currentColor" className="text-xs text-slate-500" />
                 <Tooltip />
-                <Bar dataKey="quantity" fill="#4f46e5" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="quantity" fill="#334155" radius={[0, 4, 4, 0]} />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -94,7 +96,7 @@ export default function Dashboard() {
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-base font-semibold text-slate-900 dark:text-white">Upcoming Events</h2>
-            <Link to="/events" className="text-sm font-medium text-indigo-600 hover:underline">
+            <Link to="/events" className="text-sm font-medium text-slate-900 hover:underline">
               View all
             </Link>
           </div>
@@ -105,7 +107,7 @@ export default function Dashboard() {
               {data.upcomingEvents.map((ev) => (
                 <li key={ev.id} className="flex items-center justify-between py-3">
                   <div>
-                    <Link to={`/events/${ev.id}`} className="font-medium text-slate-800 hover:text-indigo-600 dark:text-slate-100">
+                    <Link to={`/events/${ev.id}`} className="font-medium text-slate-800 hover:text-slate-900 dark:text-slate-100">
                       {ev.title}
                     </Link>
                     <p className="text-xs text-slate-500 dark:text-slate-400">
@@ -122,7 +124,7 @@ export default function Dashboard() {
         <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-base font-semibold text-slate-900 dark:text-white">Low Stock Alerts</h2>
-            <Link to="/inventory" className="text-sm font-medium text-indigo-600 hover:underline">
+            <Link to="/inventory" className="text-sm font-medium text-slate-900 hover:underline">
               View inventory
             </Link>
           </div>

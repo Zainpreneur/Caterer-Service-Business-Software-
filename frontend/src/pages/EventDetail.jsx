@@ -173,7 +173,7 @@ export default function EventDetail() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <Link to="/events" className="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:underline">
+        <Link to="/events" className="inline-flex items-center gap-1 text-sm font-medium text-slate-900 hover:underline">
           <ArrowLeft size={16} /> Back to events
         </Link>
         <div className="flex gap-2">
@@ -191,13 +191,13 @@ export default function EventDetail() {
           <div>
             <h1 className="text-2xl font-bold text-slate-900 dark:text-white">{event.title}</h1>
             <p className="text-sm text-slate-500 dark:text-slate-400">
-              <Link to={`/customers/${event.customerId}`} className="hover:text-indigo-600 hover:underline">{event.customer?.name}</Link> · {event.eventType}
+              <Link to={`/customers/${event.customerId}`} className="hover:text-slate-900 hover:underline">{event.customer?.name}</Link> · {event.eventType}
             </p>
           </div>
           <select
             value={event.status}
             onChange={(e) => handleStatusChange(e.target.value)}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium focus:border-slate-500 focus:outline-none focus:ring-1 focus:ring-slate-400 dark:border-slate-700 dark:bg-slate-800 dark:text-white"
           >
             {STATUS_OPTIONS.map((s) => (
               <option key={s} value={s}>{s.replace('_', ' ')}</option>
@@ -274,7 +274,7 @@ export default function EventDetail() {
         <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-base font-semibold text-slate-900 dark:text-white">Staff Assigned</h2>
-            <button onClick={() => setStaffModalOpen(true)} className="flex items-center gap-1 text-sm font-medium text-indigo-600 hover:underline">
+            <button onClick={() => setStaffModalOpen(true)} className="flex items-center gap-1 text-sm font-medium text-slate-900 hover:underline">
               <UserPlus size={14} /> Assign
             </button>
           </div>
@@ -302,7 +302,7 @@ export default function EventDetail() {
       <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-base font-semibold text-slate-900 dark:text-white">Invoices</h2>
-          <button onClick={handleGenerateInvoice} className="flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-indigo-700">
+          <button onClick={handleGenerateInvoice} className="flex items-center gap-1.5 rounded-lg bg-slate-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-900">
             <Plus size={14} /> Generate Invoice
           </button>
         </div>
@@ -312,7 +312,7 @@ export default function EventDetail() {
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {event.invoices.map((inv) => (
               <li key={inv.id} className="flex items-center justify-between py-3">
-                <Link to={`/invoices/${inv.id}`} className="flex items-center gap-2 font-medium text-slate-800 hover:text-indigo-600 dark:text-slate-100">
+                <Link to={`/invoices/${inv.id}`} className="flex items-center gap-2 font-medium text-slate-800 hover:text-slate-900 dark:text-slate-100">
                   <FileText size={16} /> {inv.invoiceNumber}
                 </Link>
                 <div className="flex items-center gap-3">
@@ -377,7 +377,7 @@ export default function EventDetail() {
                 {menuItems.map((item) => (
                   <div key={item.id} className="flex items-center justify-between rounded-md px-2 py-1.5 hover:bg-slate-50 dark:hover:bg-slate-800/60">
                     <label className="flex flex-1 items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
-                      <input type="checkbox" checked={selectedMenu[item.id] !== undefined} onChange={() => toggleMenuItem(item.id)} className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+                      <input type="checkbox" checked={selectedMenu[item.id] !== undefined} onChange={() => toggleMenuItem(item.id)} className="h-4 w-4 rounded border-slate-300 text-slate-900 focus:ring-slate-400" />
                       {item.name} <span className="text-xs text-slate-400">({formatCurrency(item.pricePerHead)}/head)</span>
                     </label>
                     {selectedMenu[item.id] !== undefined && (
@@ -391,7 +391,7 @@ export default function EventDetail() {
               <button type="button" onClick={() => setEditModalOpen(false)} className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
                 Cancel
               </button>
-              <button type="submit" disabled={saving} className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60">
+              <button type="submit" disabled={saving} className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900 disabled:opacity-60">
                 {saving ? 'Saving…' : 'Save Changes'}
               </button>
             </div>
@@ -423,7 +423,7 @@ export default function EventDetail() {
             <button type="button" onClick={() => setStaffModalOpen(false)} className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800">
               Cancel
             </button>
-            <button type="submit" className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700">
+            <button type="submit" className="rounded-md bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-900">
               Assign
             </button>
           </div>

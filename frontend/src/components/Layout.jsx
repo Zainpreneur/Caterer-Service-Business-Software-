@@ -39,7 +39,7 @@ export default function Layout() {
       {/* Mobile top bar */}
       <div className="flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 md:hidden dark:border-slate-800 dark:bg-slate-900">
         <div className="flex items-center gap-2 font-semibold text-slate-900 dark:text-white">
-          <ChefHat className="text-indigo-600" size={22} />
+          <ChefHat className="text-slate-900" size={22} />
           Caterly
         </div>
         <button onClick={() => setSidebarOpen((v) => !v)} className="text-slate-600 dark:text-slate-300">
@@ -55,7 +55,7 @@ export default function Layout() {
           }`}
         >
           <div className="mb-6 hidden items-center gap-2 px-2 text-xl font-bold text-slate-900 md:flex dark:text-white">
-            <ChefHat className="text-indigo-600" size={26} />
+            <ChefHat className="text-slate-900" size={26} />
             Caterly
           </div>
 
@@ -69,7 +69,7 @@ export default function Layout() {
                 className={({ isActive }) =>
                   `flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors ${
                     isActive
-                      ? 'bg-indigo-600 text-white'
+                      ? 'bg-slate-800 text-white'
                       : 'text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800'
                   }`
                 }

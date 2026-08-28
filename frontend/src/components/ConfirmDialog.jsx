@@ -14,7 +14,7 @@ export default function ConfirmDialog({ open, title = 'Are you sure?', message, 
         <button
           onClick={onConfirm}
           className={`rounded-md px-4 py-2 text-sm font-medium text-white ${
-            danger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-indigo-600 hover:bg-indigo-700'
+            danger ? 'bg-rose-600 hover:bg-rose-700' : 'bg-slate-800 hover:bg-slate-900'
           }`}
         >
           {confirmLabel}

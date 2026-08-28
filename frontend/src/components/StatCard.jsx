@@ -1,6 +1,6 @@
-export default function StatCard({ label, value, icon: Icon, accent = 'indigo', sub }) {
+export default function StatCard({ label, value, icon: Icon, accent = 'slate', sub }) {
   const accents = {
-    indigo: 'bg-indigo-50 text-indigo-600 dark:bg-indigo-500/10 dark:text-indigo-400',
+    slate: 'bg-slate-100 text-slate-700 dark:bg-slate-500/10 dark:text-slate-300',
     emerald: 'bg-emerald-50 text-emerald-600 dark:bg-emerald-500/10 dark:text-emerald-400',
     amber: 'bg-amber-50 text-amber-600 dark:bg-amber-500/10 dark:text-amber-400',
     rose: 'bg-rose-50 text-rose-600 dark:bg-rose-500/10 dark:text-rose-400',
