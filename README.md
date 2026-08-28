@@ -4,6 +4,11 @@ A full-stack web application for running a catering business: manage customers, 
 menu, book and plan events, assign staff, track ingredient inventory, and bill clients
 with invoices and payments — all from one dashboard.
 
+> **Where this is headed:** [`business-compiler/`](./business-compiler) contains a full
+> business-compiler output for the catering category — ontology, data model, workflows,
+> KPI dashboards, an AI agent hierarchy, automations, RBAC/ABAC, integrations, simulation,
+> and a phased deployment roadmap for everything beyond this MVP.
+
 ## Features
 
 - **Authentication** — JWT-based login/register (first registered user becomes admin).

@@ -1,0 +1,390 @@
+# ==============================================================================
+# BUSINESS COMPILER OUTPUT
+# Category:      Catering Service Business
+# Target system: Caterly (this repository — /backend, /frontend)
+# Generated per: zainpreneur/BusinessCompiler skill.json specification
+#   (business DNA -> ontology -> BIR -> data model -> workflows -> UI ->
+#    KPI dashboards -> AI agent hierarchy -> automations -> security ->
+#    integrations -> simulation/forecasting -> knowledge graph -> local-first sync)
+# ==============================================================================
+
+compiler:
+  name: BusinessCompiler
+  version: "1.0"
+  category: "Catering Service Business"
+  compiledFor: "Caterly"
+  status: "Phase 1 (Foundation) already implemented in this repo; Phases 2-10 specified below"
+
+# ------------------------------------------------------------------------------
+# 1. BUSINESS DNA — the invariant traits that shape every downstream decision
+# ------------------------------------------------------------------------------
+businessDNA:
+  revenueModel: "project-based, not subscription — each event is a one-off engagement with a fixed, immovable deadline"
+  demandPattern: "seasonal + event-driven (wedding season, holidays, corporate quarter-ends, graduation season)"
+  inventoryProfile: "perishable, just-in-time; high spoilage risk; ingredient cost is the dominant variable cost"
+  laborProfile: "core salaried staff (chefs, coordinators) + large on-call/gig pool (servers, bartenders) scheduled per event"
+  pricingModel: "quote-driven, per-head pricing customized per client; not fixed-SKU retail pricing"
+  logistics: "physical: food + equipment must reach a venue, be executed on-site, and be torn down — multi-party choreography around one timestamp"
+  cashFlow: "deposit at contract signing -> milestone/balance payment before event -> final invoice reconciliation after"
+  reputationDriver: "referral- and review-driven; repeat corporate/venue relationships are disproportionately valuable"
+  regulatory: "food safety permits, allergen disclosure, liquor licensing (where applicable), per-event liability insurance"
+  failureMode: "the one failure mode that matters most: missing the event date/time — everything in the workflow model below is designed to protect that deadline"
+
+# ------------------------------------------------------------------------------
+# 2. UNIVERSAL ONTOLOGY — entities and relationships for the catering domain
+#    (✅ = implemented in this repo today; ➕ = specified for later phases)
+# ------------------------------------------------------------------------------
+ontology:
+  entities:
+    - { name: Organization,      status: "➕", note: "the catering company; supports multi-branch/franchise later" }
+    - { name: Location/Kitchen,  status: "➕", note: "production facility; scopes inventory and staff in multi-branch setups" }
+    - { name: Lead,               status: "➕", note: "pre-Customer inquiry; converts to Customer + Quote" }
+    - { name: Customer,           status: "✅" }
+    - { name: Quote/Proposal,     status: "➕", note: "versioned, line-itemized, has expiration date; wins become Contracts" }
+    - { name: Contract,           status: "➕", note: "signed agreement; deposit terms; e-signature integration" }
+    - { name: Event,              status: "✅" }
+    - { name: Venue,              status: "➕", note: "own hall, client site, or third-party venue; capacity, load-in constraints" }
+    - { name: MenuCategory,       status: "✅" }
+    - { name: MenuItem,           status: "✅" }
+    - { name: Recipe/BOM,         status: "➕", note: "bill-of-materials linking MenuItem -> InventoryItem quantities; enables auto stock deduction and cost-of-goods" }
+    - { name: Package,            status: "➕", note: "bundled menu + service tiers (e.g. Silver/Gold/Platinum)" }
+    - { name: InventoryItem,      status: "✅" }
+    - { name: Supplier,           status: "➕" }
+    - { name: PurchaseOrder,      status: "➕" }
+    - { name: Staff,              status: "✅" }
+    - { name: Shift/Timesheet,    status: "➕", note: "clock-in/out, payroll export" }
+    - { name: Equipment/Asset,    status: "➕", note: "chafing dishes, tables, linens — rental/asset booking per event" }
+    - { name: Vehicle/DeliveryRun,status: "➕" }
+    - { name: Invoice,            status: "✅" }
+    - { name: Payment,            status: "✅" }
+    - { name: Expense,            status: "➕", note: "actuals vs. quoted cost, per event" }
+    - { name: Task/Checklist,     status: "➕", note: "T-minus event prep and teardown checklists" }
+    - { name: Feedback/Review,    status: "➕" }
+    - { name: ComplianceRecord,   status: "➕", note: "permit expirations, allergen incident log, insurance certs" }
+    - { name: Campaign/Referral,  status: "➕" }
+    - { name: Document,           status: "➕", note: "contract PDFs, insurance certs, permits" }
+
+  keyRelationships:
+    - "Lead 1---1 Customer (on conversion)"
+    - "Customer 1---N Quote 1---1 Contract 1---1 Event"
+    - "Event N---N MenuItem (via EventMenuItem, per-head quantity)   [implemented]"
+    - "Event N---N Staff (via EventStaff, role + hours)              [implemented]"
+    - "Event 1---1 Venue"
+    - "Event 1---N Task (prep/teardown checklist)"
+    - "Event 1---N Equipment booking"
+    - "Event 1---N Invoice 1---N Payment                             [implemented]"
+    - "MenuItem 1---N RecipeLine N---1 InventoryItem (BOM explosion)"
+    - "InventoryItem N---1 Supplier; InventoryItem 1---N PurchaseOrderLine"
+    - "Staff 1---N Shift (per event)"
+    - "Event 1---1 Feedback (post-event)"
+
+# ------------------------------------------------------------------------------
+# 3. BUSINESS INTERMEDIATE REPRESENTATION (BIR) — formal lifecycle state machines
+# ------------------------------------------------------------------------------
+bir:
+  stateMachines:
+    Lead:
+      states: [new, contacted, quoted, won, lost]
+      transitions:
+        - { from: new,       to: contacted, trigger: "first outreach logged" }
+        - { from: contacted, to: quoted,    trigger: "quote sent" }
+        - { from: quoted,    to: won,       trigger: "contract signed -> creates Customer + Event" }
+        - { from: quoted,    to: lost,      trigger: "declined or expired" }
+
+    Event:
+      states: [inquiry, confirmed, in_prep, in_progress, completed, cancelled]
+      note: "extends the 'inquiry/confirmed/in_progress/completed/cancelled' status already implemented; adds 'in_prep' as a formal pre-event phase"
+      transitions:
+        - { from: inquiry,     to: confirmed,   trigger: "deposit received / contract signed" }
+        - { from: confirmed,   to: in_prep,     trigger: "T-7 days before eventDate (automation)" }
+        - { from: in_prep,     to: in_progress, trigger: "event start time reached" }
+        - { from: in_progress, to: completed,   trigger: "manually closed or T+1 day auto-close" }
+        - { from: "*",          to: cancelled,   trigger: "manual cancellation (any pre-completion state)" }
+      invariant: "eventDate is immutable once status >= confirmed without an explicit reschedule action (protects businessDNA.failureMode)"
+
+    Invoice:
+      states: [draft, sent, partially_paid, paid, overdue, cancelled]
+      note: "already implemented; status is derived automatically from amountPaid vs totalAmount vs dueDate"
+
+    PurchaseOrder:
+      states: [draft, submitted, partially_received, received, closed]
+
+    Shift:
+      states: [open, assigned, confirmed, clocked_in, clocked_out, no_show]
+
+# ------------------------------------------------------------------------------
+# 4. DATA MODEL — concrete schema (Sequelize/SQL-shaped)
+# ------------------------------------------------------------------------------
+dataModel:
+  implemented:
+    - User(id, name, email, password, role, isActive)
+    - Customer(id, name, email, phone, company, address, notes)
+    - MenuCategory(id, name, description)
+    - MenuItem(id, categoryId, name, description, pricePerHead, isVegetarian, isVegan, isAvailable)
+    - Event(id, customerId, title, eventType, eventDate, startTime, endTime, venue, guestCount, status, notes, discount, taxPercent, createdBy)
+    - EventMenuItem(id, eventId, menuItemId, quantity, priceAtBooking)
+    - Staff(id, name, email, phone, role, hourlyRate, isActive)
+    - EventStaff(id, eventId, staffId, assignedRole, hoursAssigned)
+    - InventoryItem(id, name, unit, quantityInStock, reorderLevel, costPerUnit, supplier)
+    - InventoryTransaction(id, inventoryItemId, type, quantity, note, eventId)
+    - Invoice(id, eventId, invoiceNumber, issueDate, dueDate, subtotal, discount, tax, totalAmount, amountPaid, status, notes)
+    - Payment(id, invoiceId, amount, method, paymentDate, reference, notes)
+
+  specifiedForLaterPhases:
+    - Lead(id, name, email, phone, source, status, estimatedGuestCount, estimatedEventDate, notes)
+    - Quote(id, leadId, customerId, version, lineItems[JSON], subtotal, discount, tax, total, expiresAt, status)
+    - Contract(id, quoteId, eventId, signedAt, depositAmount, depositPaidAt, balanceDueDate, documentUrl)
+    - Venue(id, name, address, capacity, contactName, contactPhone, loadInNotes)
+    - Recipe(id, menuItemId, inventoryItemId, quantityPerHead, unit)   # BOM line
+    - Package(id, name, description, pricePerHead, includedMenuItemIds[JSON])
+    - Supplier(id, name, contactName, phone, email, leadTimeDays, rating)
+    - PurchaseOrder(id, supplierId, status, orderedAt, expectedAt, receivedAt)
+    - PurchaseOrderLine(id, purchaseOrderId, inventoryItemId, quantity, unitCost)
+    - Shift(id, eventId, staffId, roleNeeded, startTime, endTime, status, clockInAt, clockOutAt)
+    - Equipment(id, name, category, quantityOwned, replacementCost)
+    - EquipmentBooking(id, equipmentId, eventId, quantity)
+    - Expense(id, eventId, category, description, amount, incurredAt)
+    - Task(id, eventId, title, dueOffsetDays, assignedRole, completedAt)
+    - Feedback(id, eventId, rating, comments, submittedAt)
+    - ComplianceRecord(id, type, referenceId, expiresAt, documentUrl)
+
+# ------------------------------------------------------------------------------
+# 5. EXECUTABLE WORKFLOWS
+# ------------------------------------------------------------------------------
+workflows:
+  - name: "Lead-to-Cash"
+    steps:
+      - "Lead captured (web form / phone / referral)"
+      - "Coordinator sends Quote (package + custom menu selection)"
+      - "Client accepts -> Contract generated -> e-signature -> deposit invoice created"
+      - "Deposit paid -> Event status: confirmed"
+      - "Balance invoice auto-generated N days before eventDate"
+      - "Event completed -> final invoice reconciled -> feedback request sent"
+
+  - name: "Event Prep Countdown (T-minus checklist)"
+    steps:
+      - "T-14 days: confirm final guest count with client"
+      - "T-7 days: finalize menu; Kitchen Planning Agent explodes Recipes x guestCount into a shopping list"
+      - "T-5 days: Purchase Orders sent to suppliers for anything below reorder threshold"
+      - "T-2 days: kitchen prep begins; equipment pulled from inventory and booked"
+      - "T-1 day: staff shift reminders sent; vehicle/delivery run scheduled"
+      - "Day-of: on-site execution checklist (setup, service, teardown)"
+      - "T+1 day: post-event invoice reconciliation + feedback survey"
+
+  - name: "Procurement (reactive + planned)"
+    steps:
+      - "Trigger: InventoryItem.quantityInStock <= reorderLevel OR Kitchen Planning Agent forecast shortfall"
+      - "Draft PurchaseOrder to preferred Supplier for the item"
+      - "Manager approves PO (RBAC-gated)"
+      - "Receive stock -> InventoryTransaction(type=restock) -> quantityInStock updated  [restock transaction already implemented]"
+
+  - name: "Staffing"
+    steps:
+      - "Event confirmed -> required roles computed from guestCount and service style (e.g. 1 server per 15 guests, 1 bartender per 75 guests)"
+      - "Open shifts posted to eligible Staff"
+      - "Staff claims or is assigned (EventStaff record — already implemented) -> shift confirmed"
+      - "Automated reminder 48h and 24h before shift start"
+      - "Clock-in/out captured; feeds payroll export"
+
+  - name: "Collections"
+    steps:
+      - "Invoice generated from Event (already implemented)"
+      - "Reminder sent at dueDate-3d, dueDate, dueDate+3d (escalating tone)"
+      - "Overdue > 7 days -> flagged to Operations Manager"
+
+# ------------------------------------------------------------------------------
+# 6. UI / FORMS (screen inventory)
+# ------------------------------------------------------------------------------
+ui:
+  implemented:
+    - "Login / Register"
+    - "Dashboard (revenue, upcoming events, low stock, top dishes, status breakdown)"
+    - "Customers: list + detail + CRUD modal"
+    - "Menu: categories + items grid + CRUD modals"
+    - "Events: list with status filters + detail (menu lines, staff assignment, invoices) + create/edit modal"
+    - "Staff: card grid + CRUD modal"
+    - "Inventory: table + CRUD modal + stock transaction modal"
+    - "Invoices: list + detail (payments, print view)"
+
+  specifiedForLaterPhases:
+    - "Lead intake form (public-facing or coordinator-entered)"
+    - "Quote builder: side-by-side package comparison, live per-head total as items are toggled"
+    - "Contract review + e-signature screen"
+    - "Recipe/BOM editor on each MenuItem (link ingredients + quantity per head)"
+    - "Supplier directory + Purchase Order screen"
+    - "Shift scheduler (calendar view, drag-to-assign)"
+    - "Equipment inventory + booking view per event"
+    - "Event checklist / task board (T-minus countdown view)"
+    - "Client-facing portal: view own quote/contract/invoice/event status, submit feedback"
+
+# ------------------------------------------------------------------------------
+# 7. KPI DASHBOARDS
+# ------------------------------------------------------------------------------
+kpiDashboards:
+  financial:
+    - { kpi: "Revenue (MTD / trailing 12mo)", implemented: true }
+    - { kpi: "Outstanding balance",           implemented: true }
+    - { kpi: "Gross margin per event (revenue - food cost - labor cost)", implemented: false, needs: [Recipe, Expense] }
+    - { kpi: "Food cost % of revenue (target <30-35%)",  implemented: false, needs: [Recipe] }
+    - { kpi: "Labor cost % of revenue (target <20-25%)", implemented: false, needs: [Shift, Expense] }
+    - { kpi: "Average event value",           implemented: false }
+  operations:
+    - { kpi: "Low-stock item count",          implemented: true }
+    - { kpi: "Inventory turnover / waste %",  implemented: false, needs: [InventoryTransaction history analysis] }
+    - { kpi: "On-time prep checklist completion rate", implemented: false, needs: [Task] }
+    - { kpi: "Staff utilization (hours booked / hours available)", implemented: false, needs: [Shift] }
+  sales:
+    - { kpi: "Events this month",             implemented: true }
+    - { kpi: "Top menu items booked",         implemented: true }
+    - { kpi: "Events by status",              implemented: true }
+    - { kpi: "Lead conversion rate",          implemented: false, needs: [Lead, Quote] }
+    - { kpi: "Quote win rate / avg sales cycle length", implemented: false, needs: [Lead, Quote] }
+  customer:
+    - { kpi: "Repeat booking rate",           implemented: false, needs: [historical Event query by customerId] }
+    - { kpi: "Average feedback rating",       implemented: false, needs: [Feedback] }
+
+# ------------------------------------------------------------------------------
+# 8. AI AGENT HIERARCHY
+# ------------------------------------------------------------------------------
+agentHierarchy:
+  orchestrator:
+    name: "Business Ops Orchestrator"
+    responsibility: "monitors overall business health, escalates conflicts between sub-agents (e.g. staffing agent wants more servers than budget allows), surfaces a daily digest"
+  subAgents:
+    - name: "Sales & Quoting Agent"
+      responsibility: "drafts quotes from lead intake using Package templates; follows up on cold leads and expiring quotes"
+      readsFrom: [Lead, Package, MenuItem]
+      writesTo: [Quote]
+    - name: "Kitchen Planning Agent"
+      responsibility: "explodes Recipe/BOM x guestCount for all upcoming events into a consolidated shopping list per supplier"
+      readsFrom: [Event, EventMenuItem, Recipe, InventoryItem]
+      writesTo: [PurchaseOrder draft]
+    - name: "Inventory Forecasting Agent"
+      responsibility: "predicts stock needs and reorder timing from the upcoming event calendar plus historical usage patterns"
+      readsFrom: [Event, InventoryTransaction]
+      writesTo: [InventoryItem.reorderLevel suggestions]
+    - name: "Staffing Agent"
+      responsibility: "computes required roles/headcount per event from guestCount and service style; manages shift posting, reminders, no-show backfill"
+      readsFrom: [Event, Staff, Shift]
+      writesTo: [Shift, EventStaff]
+    - name: "Billing & Collections Agent"
+      responsibility: "auto-generates deposit/balance/final invoices on schedule; sends escalating payment reminders"
+      readsFrom: [Event, Invoice]
+      writesTo: [Invoice, Payment reminders]
+    - name: "Customer Success Agent"
+      responsibility: "sends post-event feedback requests, re-engagement campaigns to lapsed clients, referral prompts to happy clients"
+      readsFrom: [Event, Feedback, Customer]
+      writesTo: [Campaign, Feedback]
+    - name: "Compliance Agent"
+      responsibility: "tracks permit/insurance expirations and allergen flags on menus; blocks event confirmation if a required document has lapsed"
+      readsFrom: [ComplianceRecord, MenuItem]
+      writesTo: [alerts, Event confirmation gate]
+
+# ------------------------------------------------------------------------------
+# 9. AUTOMATIONS
+# ------------------------------------------------------------------------------
+automations:
+  - trigger: "InventoryItem.quantityInStock <= reorderLevel"
+    action: "draft PurchaseOrder to preferred Supplier"
+  - trigger: "Event.status -> confirmed"
+    action: "generate T-minus prep checklist + compute staffing requirement"
+  - trigger: "eventDate - 7d / -2d / -1d"
+    action: "reminder to coordinator/chef/assigned staff"
+  - trigger: "Invoice.status = overdue for N days"
+    action: "auto reminder email/SMS; escalate to manager after 2 reminders"
+  - trigger: "Event.status -> completed"
+    action: "send feedback survey after 24h"
+  - trigger: "Quote unresponded for 3 days"
+    action: "auto follow-up email"
+  - trigger: "Contract unsigned N days before eventDate"
+    action: "urgent reminder to coordinator; risk flag on Event"
+
+# ------------------------------------------------------------------------------
+# 10. SECURITY — RBAC / ABAC
+# ------------------------------------------------------------------------------
+security:
+  roles:
+    - { role: admin,        scope: "full access (current implementation)" }
+    - { role: manager,      scope: "full access except user management (current implementation)" }
+    - { role: coordinator,  scope: "➕ create/edit Leads, Quotes, Events; read-only Invoices", planned: true }
+    - { role: chef,         scope: "➕ read Events + Recipes/menu; edit prep checklist; no financial data", planned: true }
+    - { role: server_staff, scope: "➕ read only events they are assigned to via EventStaff; edit own shift clock-in/out", planned: true }
+    - { role: accountant,   scope: "➕ full Invoice/Payment/Expense access; read-only Events", planned: true }
+    - { role: client,       scope: "➕ client portal: read-only on own Customer/Event/Quote/Invoice records", planned: true }
+
+  abacRules:
+    - "server_staff may only read an Event if a matching EventStaff(eventId, staffId=self) row exists"
+    - "client role is scoped to records where Customer.id == session.customerId"
+    - "chef role cannot read Invoice.totalAmount, Payment, or InventoryItem.costPerUnit (cost visibility gated to admin/manager/accountant)"
+    - "multi-branch (future): all roles implicitly scoped to their assigned Location/Kitchen id"
+
+  currentImplementation: "JWT auth + role field (admin/manager/staff) on User; route-level protect() + authorize() middleware already in place in backend/src/middleware/auth.js — the roles/ABAC rules above extend this same mechanism"
+
+# ------------------------------------------------------------------------------
+# 11. INTEGRATIONS
+# ------------------------------------------------------------------------------
+integrations:
+  - { system: "Stripe or Square",        purpose: "card payments, deposits, client-facing payment links" }
+  - { system: "QuickBooks / Xero",       purpose: "accounting export of invoices, payments, expenses" }
+  - { system: "Google Calendar / Outlook", purpose: "sync event dates and staff shifts" }
+  - { system: "DocuSign / HelloSign",    purpose: "contract e-signature" }
+  - { system: "Twilio",                  purpose: "SMS shift and payment reminders" }
+  - { system: "SendGrid / Postmark",     purpose: "transactional email (quotes, invoices, reminders, feedback requests)" }
+  - { system: "Google Maps / routing API", purpose: "delivery run planning and ETA" }
+  - { system: "Google Business / Yelp",  purpose: "post-event review solicitation links" }
+
+# ------------------------------------------------------------------------------
+# 12. SIMULATION & FORECASTING
+# ------------------------------------------------------------------------------
+simulation:
+  - name: "Quote profitability simulator"
+    description: "before sending a quote, simulate margin impact of guest count, menu mix, discount %, and tax to protect target margin"
+  - name: "Ingredient price sensitivity"
+    description: "simulate gross-margin impact if a key ingredient's cost rises X% — flags menu items that become unprofitable"
+  - name: "Staffing cost/quality simulator"
+    description: "given event parameters, compare cost vs. service-quality risk across staffing ratios"
+  - name: "Seasonal demand forecast"
+    description: "project booking volume by month from historical Event data to guide proactive hiring and supplier contracts"
+  - name: "Cash flow forecast"
+    description: "combine confirmed-event invoices with pipeline (Quote win-rate weighted) to project 90-day cash position"
+
+# ------------------------------------------------------------------------------
+# 13. KNOWLEDGE GRAPH ENRICHMENT
+# ------------------------------------------------------------------------------
+knowledgeGraph:
+  nodes: [Customer, Event, MenuItem, Staff, Feedback, Supplier, Lead]
+  enrichmentQueries:
+    - "which menu-item combinations correlate with 5-star Feedback?"
+    - "which staff pairings on an Event correlate with higher feedback ratings or repeat bookings?"
+    - "which Lead sources convert to won Quotes at the highest rate?"
+    - "ingredient price trend per Supplier, to strengthen procurement negotiation"
+    - "which Customers have the highest lifetime value and referral count, to prioritize account management"
+
+# ------------------------------------------------------------------------------
+# 14. LOCAL-FIRST SYNC PLAN (event-day mobile use)
+# ------------------------------------------------------------------------------
+localFirstSync:
+  problem: "on-site staff at a venue often have unreliable connectivity; the app must keep working"
+  scope: "today's Event details, prep/teardown checklist, guest-count changes, incident notes, staff clock-in/out"
+  storage: "local SQLite (mobile) / IndexedDB (web) mirroring the day's Event subgraph, synced in the background when connectivity returns"
+  conflictResolution:
+    simpleFields: "last-write-wins (e.g. a checklist item toggled complete)"
+    appendOnlyLogs: "merge/CRDT semantics for incident notes and clock-in/out events — these are treated as immutable, timestamped events, never overwritten"
+  syncBoundary: "scoped per Event, per day — pulls only the staff member's assigned events for that date to keep the offline dataset small"
+
+# ------------------------------------------------------------------------------
+# DEPLOYMENT ROADMAP — see DEPLOYMENT_GUIDE.md for the full step-by-step plan
+# ------------------------------------------------------------------------------
+deployment:
+  guide: "./DEPLOYMENT_GUIDE.md"
+  phases:
+    - { phase: 1, name: "Foundation",              status: "done (this repo)" }
+    - { phase: 2, name: "Sales pipeline",          status: "planned" }
+    - { phase: 3, name: "Procurement & assets",    status: "planned" }
+    - { phase: 4, name: "Workforce ops",           status: "planned" }
+    - { phase: 5, name: "Financial ops & payments",status: "planned" }
+    - { phase: 6, name: "AI agent layer",          status: "planned" }
+    - { phase: 7, name: "Analytics & forecasting", status: "planned" }
+    - { phase: 8, name: "Mobile / local-first",    status: "planned" }
+    - { phase: 9, name: "Security hardening",      status: "planned" }
+    - { phase: 10, name: "External integrations",  status: "planned" }
